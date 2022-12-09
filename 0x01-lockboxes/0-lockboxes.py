@@ -5,9 +5,9 @@ all the boxes can be opened
 """
 
 
-def unlockTheBox(boxes):
+def canUnlockAll(boxes):
     """
-    function unlockTheBox
+    function canUnlockAll
     """
     size_box = len(boxes)
     keys = [0]
