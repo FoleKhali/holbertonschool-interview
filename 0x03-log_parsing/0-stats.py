@@ -1,43 +1,44 @@
 #!/usr/bin/python3
-"""
-Write a script that reads stdin line by line and computes metrics
-"""
+"""This script reads stdin line by line and computes metrics"""
 import sys
 
 
-dict_status = {200: 0, 301: 0, 400: 0, 401: 0,
-               403: 0, 404: 0, 405: 0, 500: 0}
-total_sizes = 0
-count_line = 1
+def printer(total, status):
+    print("File size: {}".format(total))
+    for key, value in sorted(status.items()):
+        if value != 0:
+            print("{}: {}".format(key, value))
 
 
-def print_stats():
-    """
-    Prints file size and stats for every 10 loops
-    """
-    print('File size: {}'.format(total_sizes))
-    for code in sorted(dict_status.keys()):
-        if dict_status[code] != 0:
-            print('{}: {}'.format(code, dict_status[code]))
+def computes_metrics():
+    try:
+        total = 0
+        i = 0
+        status = {
+            '200': 0,
+            '301': 0,
+            '400': 0,
+            '401': 0,
+            '403': 0,
+            '404': 0,
+            '405': 0,
+            '500': 0,
+        }
+        for line in sys.stdin:
+            line = line.replace("-", " ")
+            line = line.split()
+            if (len(line) == 10):
+                if line[-2] in status.keys():
+                    status[line[-2]] += 1
+                total += int(line[-1])
+                i += 1
+            if i == 10 or i == 0:
+                printer(total, status)
+                i = 0
+        printer(total, status)
+    except KeyboardInterrupt as Error:
+        printer(total, status)
 
 
-try:
-    for line in sys.stdin:
-        try:
-            line = line[:-1]
-            parts = line.split(' ')
-            total_sizes += int(parts[-1])
-            status_code = int(parts[-2])
-            if status_code in dict_status:
-                dict_status[status_code] += 1
-        except Exception:
-            pass
-
-        if count_line % 10 == 0:
-            print_stats()
-        count_line += 1
-
-except KeyboardInterrupt:
-    print_stats()
-    raise
-print_stats()
+if __name__ == '__main__':
+    computes_metrics()
