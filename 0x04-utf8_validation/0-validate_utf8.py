@@ -1,48 +1,31 @@
 #!/usr/bin/python3
-"""
-Write a method that determines if a given
-data set represents a valid UTF-8 encoding
-"""
+"""Determines if a given data set represents a valid UTF-8 encoding."""
 
 
-def validUTF8(data):
+def validUTF8(data: list) -> bool:
     """
-    method that determines if a given data
-    set represents a valid UTF-8 encoding
+    validUTF8 - Determines if a given data set represents a valid UTF-8
+    encoding
+    Args:
+        @data: List of integers to identify
+    Return:
+        True if data is a valid UTF-8 encoding, else return False
     """
-    if data == [467, 133, 108]:
-        return True
-
-    remaining_bytes = 0
-
-    for byte in data:
-        if remaining_bytes > 0:
-            bin_byte = bin(byte)[2:].rjust(8, "0")
-
-            if bin_byte[:2] != "10":
-                return False
-
-            remaining_bytes -= 1
-
-        else:
-            bin_byte = bin(byte)[2:].rjust(8, "0")
-            if len(bin_byte) == 8 and bin_byte[0] == "0":
-                continue
-
-            elif len(bin_byte) == 8 and bin_byte[:3] == "110":
-                remaining_bytes = 1
-
-            elif len(bin_byte) == 8 and bin_byte[:4] == "1110":
-                remaining_bytes = 2
-
-            elif len(bin_byte) == 8 and bin_byte[:5] == "11110":
-                remaining_bytes = 3
-
-            else:
-                return False
-
-    if remaining_bytes > 0:
+    if type(data) is not list or not all([isinstance(i, int) for i in data]):
+        return False
+    new = []
+    for num in data:
+        n = num & 0xFF
+        if num < -256:
+            return False
+        new.append(n)
+    try:
+        bytes(new).decode(encoding='utf-8', errors='strict')
+    except (ValueError, UnicodeDecodeError):
         return False
 
     return True
-    
+
+
+if __name__ == '__main__':
+    validUTF8()
